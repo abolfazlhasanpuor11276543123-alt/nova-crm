@@ -1,0 +1,18 @@
+{
+  "id": "/",
+  "name": "Nova CRM",
+  "short_name": "Nova CRM",
+  "description": "سامانه مدیریت مشتریان، پرونده‌ها، پرداخت‌ها و کارکنان",
+  "lang": "fa",
+  "dir": "rtl",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f5f7fa",
+  "theme_color": "#122d3b",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

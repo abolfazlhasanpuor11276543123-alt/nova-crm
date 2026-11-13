@@ -1,0 +1,3 @@
+NovaCRM PWA 1.3
+Source UI: NovaCRM 1.2 SMTP Diagnostics Fix
+Employee capability: create own customer records; no edit/delete/payment/export.
