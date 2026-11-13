@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>فعال‌سازی حساب | Nova CRM</title>
+<style>
+body{margin:0;background:#f5f7fa;color:#182b3a;font-family:Tahoma,Arial,sans-serif;min-height:100vh;display:grid;place-items:center;padding:20px;box-sizing:border-box}
+main{width:min(420px,100%);background:white;border:1px solid #e7edf1;border-radius:18px;padding:28px;box-sizing:border-box;box-shadow:0 8px 28px #2037460b}
+h1{font-size:22px;margin:0 0 8px}p{font-size:13px;color:#71828e;line-height:1.9}
+label{display:block;font-size:12px;margin:15px 0 7px}input{width:100%;box-sizing:border-box;padding:12px;border:1px solid #dfe7eb;border-radius:9px;font:inherit}
+button{width:100%;margin-top:18px;padding:12px;border:0;border-radius:9px;background:#087e83;color:white;font:inherit;cursor:pointer}
+#error{color:#b53b47;white-space:pre-wrap}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body><main>
+<h1>Nova CRM</h1><p>برای فعال‌سازی حساب یا بازیابی دسترسی، رمز عبور دلخواه خود را انتخاب کنید.</p>
+<form id="form">
+<label for="pass">رمز عبور جدید (حداقل ۸ کاراکتر)</label><input id="pass" type="password" minlength="8" required autocomplete="new-password">
+<label for="confirm">تکرار رمز عبور</label><input id="confirm" type="password" minlength="8" required autocomplete="new-password">
+<button id="submit">ثبت رمز عبور</button><p id="error"></p>
+</form>
+</main>
+<script>
+const SUPABASE_URL="https://jxzgkitbnlehjggujpsx.supabase.co";
+const SUPABASE_KEY="sb_publishable_vklZ48LZOd32LsLTVK4hLQ_wakZTSum";
+const client=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+(async()=>{
+ const hash=new URLSearchParams(location.hash.slice(1));
+ const access_token=hash.get("access_token"),refresh_token=hash.get("refresh_token");
+ if(access_token&&refresh_token){
+   const {error}=await client.auth.setSession({access_token,refresh_token});
+   if(error)document.getElementById("error").textContent=error.message;
+   history.replaceState(null,"",location.pathname+location.search);
+ } else {
+   const {data:{session}}=await client.auth.getSession();
+   if(!session)document.getElementById("error").textContent="لینک فعال‌سازی معتبر نیست یا منقضی شده است. از مدیر بخواهید دعوت‌نامه را دوباره ارسال کند.";
+ }
+})();
+document.getElementById("form").onsubmit=async e=>{
+ e.preventDefault();
+ const a=document.getElementById("pass").value,b=document.getElementById("confirm").value,btn=document.getElementById("submit"),err=document.getElementById("error");
+ err.textContent="";
+ if(a.length<8||a!==b){err.textContent="رمزها باید یکسان و حداقل ۸ کاراکتر باشند.";return}
+ btn.disabled=true;
+ const {data:{session}}=await client.auth.getSession();
+ if(!session){err.textContent="نشست فعال‌سازی پیدا نشد. لینک دعوت را دوباره باز کنید.";btn.disabled=false;return}
+ const {error}=await client.auth.updateUser({password:a});
+ if(error){err.textContent=error.message;btn.disabled=false;return}
+ const {data:activated,error:activationError}=await client.functions.invoke("activate-own-account");
+ if(activationError||activated?.error){err.textContent="رمز عبور ثبت شد، اما فعال‌سازی نهایی انجام نشد: "+(activated?.error||activationError.message)+". لطفاً با مدیر تماس بگیرید.";btn.disabled=false;return}
+ err.textContent="رمز عبور با موفقیت ثبت شد. اکنون می‌توانید با نام کاربری و رمز جدید وارد Nova CRM شوید.";
+ document.getElementById("form").reset();btn.disabled=false;
+};
+</script></body></html>
