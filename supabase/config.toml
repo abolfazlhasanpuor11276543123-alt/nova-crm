@@ -1,0 +1,14 @@
+[functions.username-login]
+verify_jwt = false
+
+[functions.admin-create-user]
+verify_jwt = true
+
+[functions.admin-delete-employee]
+verify_jwt = true
+
+[functions.admin-resend-invite]
+verify_jwt = true
+
+[functions.activate-own-account]
+verify_jwt = true
